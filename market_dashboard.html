@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Factor Lab · 市场行情</title>
+<link rel="stylesheet" href="dashboard_fonts.css">
+<link rel="stylesheet" href="market_dashboard.css">
+<script src="market_dashboard.js" defer></script>
+<script src="market_charts.js" defer></script>
+<script src="market_intraday.js" defer></script>
+<link rel="stylesheet" href="dashboard_glass.css">
+</head>
+<body class="dashboard-page market-page">
+
+<header class="dashboard-header"><div class="dashboard-header-inner"><div class="dashboard-header-row">
+  <div class="dashboard-identity"><span aria-hidden="true">F</span><strong>Factor Lab</strong></div>
+  <nav class="research-nav" aria-label="主导航"><a href="market_dashboard.html" aria-current="page">市场行情</a><a href="factor_compare.html">因子选股</a></nav>
+</div><nav class="research-nav factor-nav" id="market-view-nav" aria-label="市场行情子导航">
+  <a href="#intraday" aria-current="page">今日行情变化</a>
+  <a href="#history">历史行情变化</a>
+</nav></div></header>
+<main class="workspace">
+<section class="hero">
+  <div><h1 class="page-title">市场行情</h1></div>
+  <div class="refresh-state"><span class="status-dot" aria-hidden="true"></span><span id="quote-status" role="status">正在连接行情源</span><button id="refresh" type="button">刷新行情</button></div>
+</section>
+<section id="history" class="market-history" aria-labelledby="market-history-title" hidden>
+<h2 id="market-history-title">历史行情变化</h2>
+<section class="index-strip" aria-labelledby="index-strip-title">
+  <div class="index-strip-heading"><h2 id="index-strip-title">指数快照</h2><span>最新价 · 较昨收</span></div>
+  <div class="overview" id="overview"></div>
+</section>
+<div class="market-boards" id="market-boards">
+<section class="surface market-board market-extra" id="market-extra" aria-labelledby="extra-title">
+  <div class="board-heading"><h2 id="extra-title">行业与宏观</h2><p class="note">日线走势</p></div>
+  <div class="board-body">
+  <section class="board-chart trend-panel" aria-labelledby="trend-title">
+    <div class="board-summary">
+    <div class="board-instrument"><h3 id="trend-title">日线走势</h3><p id="trend-subtitle" class="note">选择任意标的查看</p></div>
+    <div class="selected-quote" id="selected-quote" hidden>
+      <strong id="selected-price"></strong><span id="selected-change"></span><small id="selected-time"></small>
+    </div>
+    </div>
+    <div class="board-plot chart-frame"><canvas id="trend" role="img" aria-label="日线走势"></canvas><div class="board-tooltip" id="extra-tooltip" hidden></div><div class="trend-state" id="trend-state" hidden><p id="trend-status" role="status"></p><button type="button" id="trend-retry" hidden>重试加载</button><a id="trend-official" target="_blank" rel="noopener" hidden>查看东方财富行情</a></div></div>
+    <div class="board-insights">
+      <dl class="board-metrics indicators" id="indicators"></dl>
+      <p class="note board-note" id="trend-source"></p>
+    </div>
+    <dl class="board-metrics indicators valuation" id="valuation" hidden></dl>
+  </section>
+  <section class="board-controls quotes-panel" aria-labelledby="watch-title">
+    <div class="board-options-heading"><h3 id="watch-title">选择标的</h3><span id="quote-count"></span></div>
+    <div class="board-options"><div class="board-control"><span class="control-label">市场分类</span>
+    <div class="switcher" id="groups" role="group" aria-label="市场分类">
+      <button type="button" data-group="中证 800 行业" aria-pressed="true">A 股行业</button>
+      <button type="button" data-group="中国行业" aria-pressed="false">A 股细分板块</button>
+      <button type="button" data-group="美国行业" aria-pressed="false">美股行业 ETF</button>
+      <button type="button" data-group="宏观利率" aria-pressed="false">宏观利率</button>
+      <button type="button" data-group="大宗商品" aria-pressed="false">大宗商品</button>
+      <button type="button" data-group="外汇市场" aria-pressed="false">外汇市场</button>
+    </div>
+    </div>
+    <div class="board-control"><span class="control-label">时间范围</span><div id="extra-timeline"></div></div>
+    </div>
+    <form class="lookup instrument-search" id="extra-search" role="search">
+      <input type="search" aria-label="搜索行业、商品或外汇" placeholder="搜索名称或代码" maxlength="32">
+      <button type="submit">搜索</button>
+    </form>
+    <div class="instrument-scroll" role="region" tabindex="0" aria-label="行业与宏观标的">
+      <div class="instrument-grid" id="quotes"></div>
+    </div>
+    <div class="board-control-footer"><div id="industry-pages" hidden><button type="button" id="prev">上一页</button><span id="industry-page"></span><button type="button" id="next">下一页</button></div>
+    <p id="quote-note" class="note" role="status"></p></div>
+  </section>
+  </div>
+</section>
+</div>
+</section>
+<section class="surface market-board intraday-board" id="intraday" aria-labelledby="intraday-title">
+  <div class="board-heading"><h2 id="intraday-title">今日行情变化</h2><p class="note">最近交易日 · 开盘至收盘</p></div>
+  <div class="intraday-layout">
+    <div class="board-chart">
+      <div class="board-summary">
+        <div class="board-instrument"><h3 id="intraday-name">沪深 300</h3><p class="note" id="intraday-session"></p></div>
+        <div class="selected-quote"><strong id="intraday-value">—</strong><span id="intraday-change"></span></div>
+      </div>
+      <div class="board-plot">
+        <canvas id="intraday-chart" role="img" aria-label="盘中价格曲线"></canvas>
+        <p class="board-empty" id="intraday-status" role="status"></p>
+        <div class="board-tooltip" id="intraday-tip" hidden></div>
+      </div>
+      <p class="note intraday-source" id="intraday-source"></p>
+    </div>
+    <div class="board-controls intraday-controls">
+      <div class="board-options-heading"><h3>选择标的</h3><span id="intraday-count"></span></div>
+      <div class="lookup instrument-search">
+        <select id="intraday-group" aria-label="盘中市场分类"></select>
+        <input type="search" id="intraday-search" aria-label="搜索盘中标的" placeholder="搜索名称或代码" maxlength="32">
+      </div>
+      <div class="instrument-scroll" role="region" tabindex="0" aria-label="盘中标的">
+        <div class="instrument-grid" id="intraday-picks"></div>
+      </div>
+      <div class="board-control-footer" id="intraday-pages" hidden>
+        <button type="button" id="intraday-prev">上一页</button> <span id="intraday-page"></span> <button type="button" id="intraday-next">下一页</button>
+      </div>
+    </div>
+  </div>
+</section>
+<details class="surface sources">
+  <summary>行情来源与更新频率</summary>
+  <ul>
+    <li><a href="https://gu.qq.com/" target="_blank" rel="noopener">腾讯财经</a><span>沪深、美股及行业的公开报价与日线、A 股估值快照</span></li>
+    <li><a href="https://quote.eastmoney.com/center2/" target="_blank" rel="noopener">东方财富</a><span>A 股细分板块行情与日线</span></li>
+    <li><a href="https://finance.sina.com.cn/" target="_blank" rel="noopener">新浪财经</a><span>国际期货与人民币汇率报价、日线和分时</span></li>
+    <li><a href="https://fred.stlouisfed.org/series/DGS10" target="_blank" rel="noopener">FRED</a><span>美国 10 年期国债收益率 · 日频</span></li>
+    <li><a href="https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/000928_Index_Methodology_cn.pdf" target="_blank" rel="noopener">中证指数</a><span>中证 800 一级行业指数编制方案</span></li>
+  </ul>
+  <p class="note">报价每 30 秒查询一次，沿用供应商提供的报价时间，可能延迟。国债收益率为日频数据。</p>
+</details>
+</main>
+<template id="market-board-template">
+  <section class="surface market-board">
+    <div class="board-heading"><h2></h2><p class="note board-axis"></p></div>
+    <div class="board-body">
+      <div class="board-chart">
+        <div class="board-summary">
+          <div class="board-instrument"><h3></h3><p class="note board-symbol"></p></div>
+          <div class="selected-quote board-current"><strong></strong><span></span><small></small></div>
+          <div class="board-legend"></div>
+        </div>
+        <div class="board-plot">
+          <canvas role="img"></canvas>
+          <div class="board-tooltip" hidden></div>
+          <p class="board-empty" role="status"></p>
+        </div>
+        <div class="board-insights">
+          <dl class="board-metrics"></dl>
+          <p class="note board-note" role="status"></p>
+          <button type="button" class="board-retry" hidden>重试日线</button>
+        </div>
+      </div>
+      <div class="board-controls">
+        <div class="board-options-heading"><h3>选择标的</h3><span class="board-pick-count"></span></div>
+        <div class="board-options"><div class="board-control">
+          <span class="control-label">时间范围</span>
+          <div class="timeline-mount"></div>
+        </div>
+        <div class="board-control">
+          <span class="control-label">查看方式</span>
+          <div class="switcher board-mode" role="group" aria-label="查看方式">
+            <button type="button" data-mode="multi" aria-pressed="true">多线对比</button>
+            <button type="button" data-mode="single" aria-pressed="false">单标的</button>
+          </div>
+        </div>
+        </div>
+        <form class="lookup board-lookup instrument-search" role="search">
+          <input type="search" aria-label="搜索名称或代码" placeholder="搜索名称或代码" maxlength="32">
+          <button type="submit">搜索</button>
+        </form>
+        <div class="instrument-scroll" role="region" tabindex="0" aria-label="查看标的卡片">
+          <div class="instrument-grid board-picks"></div>
+        </div>
+        <div class="board-control-footer"><p class="note board-lookup-status" role="status"></p>
+        <details class="board-valuation" hidden><summary>A 股估值</summary><dl class="board-metrics"></dl></details></div>
+      </div>
+    </div>
+  </section>
+</template>
+<template id="timeline-template">
+  <div class="timeline">
+    <div class="switcher timeline-presets" role="group" aria-label="时间范围"></div>
+    <div class="timeline-dates">
+      <label>开始 <input type="date" class="timeline-start"></label>
+      <label>结束 <input type="date" class="timeline-end"></label>
+    </div>
+    <label class="timeline-slider">
+      <span>回看天数</span><input type="range" min="1" max="365" value="7" aria-label="回看天数，向右扩大范围，结束日固定为最新" title="向右扩大范围，结束日固定为最新">
+      <output class="timeline-lookback">7 天</output>
+    </label>
+  </div>
+</template>
+</body>
+</html>

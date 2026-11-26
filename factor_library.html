@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Factor Lab · 因子库</title>
+<link rel="stylesheet" href="dashboard_fonts.css">
+<link rel="stylesheet" href="market_dashboard.css">
+<script src="market_dashboard.js" defer></script>
+<link rel="stylesheet" href="dashboard_glass.css">
+</head>
+<body class="dashboard-page">
+
+<header class="dashboard-header"><div class="dashboard-header-inner"><div class="dashboard-header-row">
+  <div class="dashboard-identity"><span aria-hidden="true">F</span><strong>Factor Lab</strong></div>
+  <nav class="research-nav" aria-label="主导航"><a href="market_dashboard.html">市场行情</a><a href="factor_compare.html" aria-current="page">因子选股</a></nav>
+</div><nav class="research-nav factor-nav" aria-label="因子选股子导航"><a href="factor_compare.html">回测对比</a><a href="factor_holdings.html">持仓明细</a><a href="factor_library.html" aria-current="page">因子库</a></nav></div></header>
+<main class="workspace library">
+<section class="hero">
+  <div><h1 class="page-title" id="factor-title">因子库</h1><p>搜索因子，展开名称查看公式与来源。</p></div>
+  <p id="factor-period" class="note"></p>
+</section>
+<section class="surface factors" aria-label="研究策略与筛选组合">
+  <div class="factor-tools">
+    <div class="switcher" id="factor-mode" role="group" aria-label="因子记录范围">
+      <button type="button" data-mode="published" aria-pressed="true">已回测策略</button>
+      <button type="button" data-mode="screening" aria-pressed="false">筛选组合</button>
+    </div>
+    <input type="search" id="factor-search" aria-label="搜索因子" placeholder="搜索名称、代码或公式">
+    <select id="factor-category" aria-label="按因子类型筛选">
+      <option value="">全部类型</option><option>动量</option><option>反转</option><option>波动</option>
+      <option>日内与隔夜</option><option>技术指标</option><option>组合</option>
+    </select>
+  </div>
+  <div class="catalog-results">
+    <p class="note" id="factor-count" role="status">正在读取因子库</p>
+    <div class="catalog-actions">
+      <a href="factor_mining_screen.csv" id="screening-download" download hidden>下载筛选结果</a>
+      <button type="button" id="factor-metrics" aria-pressed="false">显示收益明细</button>
+    </div>
+  </div>
+  <div class="factor-scroll" tabindex="0" aria-label="因子回测结果表">
+    <table class="market-table factor-table"><thead><tr><th scope="col">因子</th><th scope="col">类型</th><th scope="col">年化超额</th><th scope="col" class="extra-metric" hidden>累计收益</th><th scope="col" class="extra-metric" hidden>最大回撤</th></tr></thead><tbody id="factor-rows"></tbody></table>
+  </div>
+</section>
+</main>
+</body>
+</html>

@@ -6,5 +6,16 @@ __pycache__/
 .env.*
 *.log
 jqdata_credentials.json
-data/
+data/*
+!data/demo/
+data/demo/*
+!data/demo/trades.csv
+!data/demo/holdings.csv
 factor_data*.json
+
+.design-review/
+.venv-jqdata/
+jqdata_credentials.*.json
+!jqdata_credentials.example.json
+factor_mining_screen.csv
+*.app/

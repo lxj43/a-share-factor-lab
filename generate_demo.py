@@ -54,7 +54,7 @@ def main():
         dates=dates, series=series,
         meta=dict(source='合成数据 · 演示', provider='Synthetic', start=dates[0], end=dates[-1],
                   rebalance=20, top_pct=.25, n_stocks=len(codes), audit_dir='data/demo',
-                  benchmark='合成基准', research_factors=RESEARCH,
+                  benchmark='合成基准', research_factors=RESEARCH, baseline_date=dates[0],
                   model='合成标的和行情，仅用于展示与测试'),
     )
     pd.DataFrame(trades, columns='factor date code side adjusted_units adjusted_price amount'.split()).to_csv(audit/'trades.csv', index=False)

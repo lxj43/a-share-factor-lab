@@ -5,16 +5,62 @@
 @media(min-width:1900px){.app{gap:24px}td{padding-top:15px;padding-bottom:15px;font-size:15px}th{font-size:13px}.cards .value{font-size:32px}}
 @media(max-width:1000px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.card{padding:12px 16px}.card:nth-child(3){border-right:0}.card:nth-child(-n+3){border-bottom:1px solid var(--line)}.card .value{font-size:22px}.toolbar .fill{display:none}header span{display:none}.title .range{font-size:10px}.toolbar input{width:180px}}
 @media(max-width:640px){.app{height:auto;min-height:100dvh;gap:16px;padding:18px 14px}.brand{font-size:14px}header a{font-size:11px;padding:8px}h1{font-size:29px}h1 small{display:block;margin:8px 0 0;font-size:12px}.title{align-items:flex-start;flex-wrap:wrap}.toolbar{gap:10px}.toolbar label{flex:1;min-width:135px}select{min-width:0;width:100%}.toolbar .search{width:100%;flex-basis:100%}.toolbar input{width:100%}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:12px}.card:nth-child(3){border-right:1px solid var(--line)}.card:nth-child(2n){border-right:0}.card:nth-child(-n+4){border-bottom:1px solid var(--line)}.card .value{font-size:23px}.data-panel{flex:none;min-height:340px}.table-wrap{max-height:65vh}table{min-width:1280px}.filters{padding:10px;gap:3px}.filters button{font-size:11px;padding:6px}.filters span{width:100%;margin:4px 0 0}.context{font-size:11px}footer{display:block}.bottom-links{margin-top:10px}}
-</style></head><body><main class="app">
-<header><div class="brand">FACTOR LAB</div><span>PORTFOLIO TRANSPARENCY / POSITION AUDIT</span><a href="factor_compare.html">← 返回收益看板</a></header>
-<section class="title"><div><div class="eyebrow">03 / HOLDINGS & REBALANCING</div><h1>持仓穿透<small>从选股分数，到每一次仓位变化</small></h1></div><div class="range" id="range"></div></section>
+
+.holdings-app.app{height:auto;min-height:calc(100dvh - 103px)}
+.holdings-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.holdings-chart{min-width:0;overflow:hidden;border:1px solid #a4bdac39;border-radius:15px;background:linear-gradient(147deg,#24362c63,#101615e8 60%);box-shadow:inset 0 1px #e1f0dd17,0 14px 34px #0004}
+.holdings-chart-title{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:13px 16px;border-bottom:1px solid #a4bdac39}
+.holdings-chart-title h2{margin:0;color:#f1e9d5;font-size:23px;font-weight:500}
+.holdings-chart-title span,.holdings-chart-note{color:var(--muted);font-size:13px}
+.nav-figure{position:relative;height:246px;background:linear-gradient(180deg,#172b213d,#0d1311)}
+#holdings-nav-chart{display:block;width:100%;height:100%}
+.holdings-chart-note{margin:0;padding:9px 16px;border-top:1px solid #a4bdac39}
+.weight-legend{display:flex;flex-wrap:wrap;gap:6px 15px;color:var(--muted);font-size:13px}
+.weight-legend span::before{content:"";display:inline-block;width:11px;height:5px;margin-right:6px;vertical-align:2px;border-radius:2px;background:var(--weight-color)}
+.weight-before{--weight-color:#83a799}
+.weight-after{--weight-color:#dfbd7c}
+.weight-rows{list-style:none;min-height:246px;margin:0;padding:8px 16px;display:grid;gap:4px;align-content:start}
+.weight-rows li{min-width:0;display:grid;grid-template-columns:minmax(72px,23%) minmax(0,1fr) 65px;gap:8px;align-items:center}
+.weight-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.weight-bar-group,.weight-numbers{display:grid;gap:1px}
+.weight-bar-track{height:7px;border-radius:2px;background:#bfd5bf12}
+.weight-bar{display:block;height:100%;width:var(--weight-width);border-radius:2px;background:var(--weight-color)}
+.weight-numbers{text-align:right;font-size:12px;line-height:1.15;color:var(--muted)}
+.weight-numbers strong{color:var(--gold);font-weight:500}
+.holdings-app .data-panel{flex:initial}
+.holdings-app .table-wrap{max-height:60vh}
+@media(max-width:740px){
+  .holdings-charts{grid-template-columns:minmax(0,1fr)}
+  .holdings-chart-title h2{font-size:20px}
+}
+</style>
+<link rel="stylesheet" href="dashboard_fonts.css"><link rel="stylesheet" href="dashboard_glass.css">
+</head><body class="dashboard-page">
+<header class="dashboard-header"><div class="dashboard-header-inner"><div class="dashboard-header-row">
+  <div class="dashboard-identity"><span aria-hidden="true">F</span><strong>Factor Lab</strong></div>
+  <nav class="research-nav" aria-label="主导航"><a href="market_dashboard.html">市场行情</a><a href="factor_compare.html" aria-current="page">因子选股</a></nav>
+</div><nav class="research-nav factor-nav" aria-label="因子选股子导航"><a href="factor_compare.html">回测对比</a><a href="factor_holdings.html" aria-current="page">持仓明细</a><a href="factor_library.html">因子库</a></nav></div></header>
+<main class="app holdings-app">
+<section class="title"><div><h1 class="page-title">持仓明细<small>从选股分数，到每一次仓位变化</small></h1></div><div class="range" id="range"></div></section>
 <section class="toolbar" aria-label="持仓筛选">
 <label>因子 / 组合策略<select id="factor"></select></label><label>查看方式<select id="view"><option value="events">调仓变化</option><option value="daily">每日持仓</option></select></label>
 <label>日期<select id="date"></select></label><div class="date-navigation"><button id="prev" type="button" aria-label="上一个日期">← 上一期</button><button id="next" type="button" aria-label="下一个日期">下一期 →</button></div><div class="fill"></div>
 <label class="search">查找股票<input id="search" type="search" placeholder="输入股票代码或名称"></label><button class="export" id="export" type="button">导出当前明细 CSV</button>
 </section><div class="context" id="context" aria-live="polite"></div><section class="cards" id="cards" aria-label="当日持仓概览"></section>
+<section class="holdings-charts" aria-label="持仓图表">
+  <section class="holdings-chart" aria-labelledby="holdings-nav-title">
+    <div class="holdings-chart-title"><h2 id="holdings-nav-title">组合净值</h2><span id="holdings-nav-value"></span></div>
+    <div class="nav-figure"><canvas id="holdings-nav-chart" role="img"></canvas></div>
+    <p class="holdings-chart-note">完整回测区间 · 金色标记为所选交易日</p>
+  </section>
+  <section class="holdings-chart" aria-labelledby="weight-title">
+    <div class="holdings-chart-title"><h2 id="weight-title">主要持仓权重</h2><div class="weight-legend"><span id="weight-before-label" class="weight-before"></span><span id="weight-after-label" class="weight-after"></span></div></div>
+    <ul id="weight-rows" class="weight-rows" aria-label="主要持仓权重比较"></ul>
+    <p class="holdings-chart-note" id="weight-note"></p>
+  </section>
+</section>
 <section class="data-panel"><div class="filters" id="filters" role="group" aria-label="持仓变化类型"></div><div class="table-wrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div></section>
-<footer><div>来源：聚宽 JQData · 研究组合，未计交易费用；数量为复权价格对应的<strong>研究单位</strong>，不是实际可下单股数。<br><span id="namesNote"></span> 因子分数越高排名越靠前；历史样本及调仓信号按当时日期取得。</div><div class="bottom-links"><a id="allTrades" download>完整交易明细 CSV ↗</a>　<a id="allHoldings" download>每日持仓全表 CSV ↗</a></div></footer><div id="error" role="alert"></div>
+<footer><div>来源：<span id="holdings-source"></span> · 研究组合，未计交易费用；数量为复权价格对应的<strong>研究单位</strong>，不是实际可下单股数。<br><span id="namesNote"></span> 因子分数越高排名越靠前；历史样本及调仓信号按当时日期取得。</div><div class="bottom-links"><a id="allTrades" download>完整交易明细 CSV ↗</a>　<a id="allHoldings" download>每日持仓全表 CSV ↗</a></div></footer><div id="error" role="alert"></div>
 </main><script>
 const REPORT=__HOLDINGS_DATA__;
 const $=id=>document.getElementById(id);
@@ -65,8 +111,73 @@ function load(){
  $('context').innerHTML=isEvent?'<strong>信号日 '+esc(exact.signal_date)+' → 执行日 '+esc(day)+'</strong>　｜　权重按执行日开盘价、交易前后同一资产口径计算；市值为当日收盘值。'
   :'<strong>持仓日期 '+esc(day)+'</strong>　｜　'+(exact?'本日发生调仓；':'本日无调仓，持仓数量保持不变；')+'权重比较昨日与本日收盘，排名来自最近信号日 '+esc(latest?.signal_date||'—')+'。';
  $('prev').disabled=$('date').selectedIndex<=0;$('next').disabled=$('date').selectedIndex>=dateList.length-1;
+ renderHoldingsCharts();
  render();
 }
+
+function drawHoldingsNav(){
+ const {key,day,now}=currentInfo;
+ if(!key) return;
+ const canvas=$('holdings-nav-chart'),{width,height}=canvas.getBoundingClientRect();
+ if(!width||!height) return;
+ const scale=devicePixelRatio||1,ctx=canvas.getContext('2d');
+ canvas.width=Math.round(width*scale);canvas.height=Math.round(height*scale);ctx.scale(scale,scale);
+ const points=REPORT.dates.map(date=>[date,REPORT.daily[key][date].nav/100000]);
+ if(REPORT.meta.baseline_date < points[0][0]) points.unshift([REPORT.meta.baseline_date,1]);
+ const values=points.map(point=>point[1]),min=Math.min(...values),max=Math.max(...values);
+ const margin=(max-min)*.08||.02,low=min-margin,high=max+margin;
+ const left=55,right=width-15,top=12,bottom=height-28;
+ const x=i=>left+(right-left)*i/Math.max(1,points.length-1);
+ const y=value=>top+(high-value)*(bottom-top)/(high-low);
+ ctx.font='13px '+getComputedStyle(document.documentElement).getPropertyValue('--dashboard-font');
+ ctx.textBaseline='middle';ctx.textAlign='right';
+ for(let i=0;i<5;i++){
+  const value=low+(high-low)*i/4;
+  ctx.strokeStyle='#bdd3bf26';ctx.beginPath();ctx.moveTo(left,y(value));ctx.lineTo(right,y(value));ctx.stroke();
+  ctx.fillStyle='#a6b7ac';ctx.fillText(number(value,2),left-7,y(value));
+ }
+ const trace=()=>points.forEach((point,i)=>i?ctx.lineTo(x(i),y(point[1])):ctx.moveTo(x(i),y(point[1])));
+ ctx.beginPath();trace();ctx.lineTo(right,bottom);ctx.lineTo(left,bottom);ctx.closePath();
+ const fill=ctx.createLinearGradient(0,top,0,bottom);
+ fill.addColorStop(0,'#dfbd7c48');fill.addColorStop(1,'#dfbd7c06');ctx.fillStyle=fill;ctx.fill();
+ ctx.beginPath();trace();ctx.lineWidth=2;ctx.strokeStyle='#dfbd7c';ctx.stroke();
+ const selected=points.findIndex(point=>point[0]===day);
+ if(selected!==-1){
+  const xx=x(selected),yy=y(points[selected][1]);
+  ctx.lineWidth=1;ctx.strokeStyle='#f0d9a9';ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(xx,top);ctx.lineTo(xx,bottom);ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(xx,yy,4,0,Math.PI*2);ctx.fillStyle='#f0d9a9';ctx.fill();
+ }
+ ctx.fillStyle='#a6b7ac';
+ const ticks=Math.min(points.length,Math.max(3,Math.min(7,Math.floor((right-left)/70)+1)));
+ for(let i=0;i<ticks;i++){
+  const index=Math.round(i*(points.length-1)/Math.max(1,ticks-1));
+  ctx.textAlign=i===0?'left':i===ticks-1?'right':'center';
+  ctx.fillText(points[index][0].slice(5),x(index),height-12);
+ }
+ canvas.setAttribute('aria-label','组合净值，'+points[0][0]+'至'+points.at(-1)[0]+'，所选交易日 '+day+'，净值 '+number(now.nav/100000,4));
+}
+
+function renderHoldingsCharts(){
+ const {isEvent,day,now}=currentInfo;
+ $('holdings-nav-value').textContent=day+' · '+number(now.nav/100000,4);
+ const before=isEvent?'调仓前':'昨日收盘',after=isEvent?'调仓后':'本日收盘';
+ $('weight-before-label').textContent=before;
+ $('weight-after-label').textContent=after;
+ $('weight-note').textContent='按'+after+'权重排序 · 最多显示 6 只';
+ const rows=currentRows.filter(r=>r.after_weight>0).sort((a,b)=>b.after_weight-a.after_weight).slice(0,6);
+ const scale=Math.max(...rows.flatMap(r=>[r.before_weight,r.after_weight]),.0001);
+ $('weight-rows').innerHTML=rows.length?rows.map(r=>{
+  const name=REPORT.names[r.c]||REPORT.codes[r.c];
+  const label=name+'，'+before+' '+pct(r.before_weight)+'，'+after+' '+pct(r.after_weight);
+  const bar=(weight,kind)=>'<div class="weight-bar-track"><span class="weight-bar '+kind+'" style="--weight-width:'+Math.max(0,weight/scale*100).toFixed(2)+'%"></span></div>';
+  return '<li aria-label="'+esc(label)+'"><span class="weight-name" title="'+esc(name)+'">'+esc(name)+'</span><span class="weight-bar-group" aria-hidden="true">'
+   +bar(r.before_weight,'weight-before')+bar(r.after_weight,'weight-after')+'</span><span class="weight-numbers">'
+   +pct(r.before_weight)+'<strong>'+pct(r.after_weight)+'</strong></span></li>';
+ }).join(''):'<li>当前无持仓</li>';
+ drawHoldingsNav();
+}
+
 function filtered(){const query=$('search').value.trim().toLowerCase();return currentRows.filter(r=>{
  const code=REPORT.codes[r.c],name=REPORT.names[r.c];
  return (filter==='all'||filter==='blocked'?filter!=='blocked'||r.action.endsWith('_blocked'):r.action===filter)&&(!query||(code+' '+name).toLowerCase().includes(query));
@@ -93,8 +204,10 @@ $('export').addEventListener('click',()=>{
  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download='持仓_'+currentInfo.key+'_'+currentInfo.day+'_'+$('view').value+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 $('factor').replaceChildren(...REPORT.factors.map(f=>new Option(f.name,f.key)));$('factor').value=REPORT.factors.some(f=>f.key==='MULTI')?'MULTI':REPORT.factors[0].key;
+$('holdings-source').textContent=REPORT.meta.source;
 $('range').textContent=REPORT.meta.start+' → '+REPORT.meta.end+' · '+REPORT.dates.length+' 个收益交易日';
 $('namesNote').textContent=REPORT.names_as_of?'股票名称使用 '+REPORT.names_as_of+' 快照（期初名称补缺），仅作展示。':'';
 const audit='data/'+REPORT.meta.audit_dir.replaceAll('\\','/').split('/').at(-1)+'/';$('allTrades').href=audit+'trades.csv';$('allHoldings').href=audit+'holdings.csv';
 dateOptions();
+new ResizeObserver(drawHoldingsNav).observe($('holdings-nav-chart'));
 </script></body></html>
